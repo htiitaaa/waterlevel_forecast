@@ -476,20 +476,16 @@
         let activeBaseLayer = null; 
         let allStations = [];
 
-        const options = {
-            key: 'myPD7Kp6ct2f3k0X6jxKDPYmQy1f5rs6',
-            lat: 13.62,
-            lon: 100.70,
-            zoom: 10,
-            verbose: false
-        };
+        // 1. ตั้งค่าแผนที่เริ่มต้น (เปลี่ยนจาก windyInit เป็น L.map)
+        map = L.map('windy').setView([13.62, 100.70], 10);
 
-        // Initialize Windy Map
-        windyInit(options, windyAPI => {
-            map = windyAPI.map;
-            windyStore = windyAPI.store;
-
-            windyStore.set('overlay', 'rain');
+        // 2. ใส่แผนที่ OSM เป็นฐานหลัก (กันโดนแบน)
+        activeBaseLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+        
+        // เซ็ตสถานะปุ่ม OSM ให้ Active
+        document.getElementById('btn-osm').classList.add('active');
 
             floodWMTS = L.tileLayer("https://gistdaportal.gistda.or.th/data/rest/services/FL_Flood/FL_RepeatedFlooding_GISTDA_50k_Y2005_Y2016/MapServer/WMTS/tile/1.0.0/FL_Flood_FL_RepeatedFlooding_GISTDA_50k_Y2005_Y2016/default/GoogleMapsCompatible/{z}/{y}/{x}.png", {
                 opacity: 0.5,
@@ -549,39 +545,31 @@
                 });
                 searchResults.style.display = matched.length ? 'block' : 'none';
             });
-        });
 
         // Layer Controls Functions
         function toggleWindyOverlay() {
             const btn = document.getElementById('tog-windy');
-            const isRain = windyStore.get('overlay') === 'rain';
+            const isActive = btn.classList.contains('active');
 
-            if (!isRain) {
-                if (activeBaseLayer) {
-                    map.removeLayer(activeBaseLayer);
-                    activeBaseLayer = null;
-                }
-                document.getElementById('btn-osm').classList.remove('active');
-                document.getElementById('btn-sat').classList.remove('active');
-                windyStore.set('overlay', 'rain');
+            if (!isActive) {
+                // ถ้าจะดูเลเยอร์ฝน ให้ดึง Tile จาก Windy มาแปะทับ (แบบนี้ไม่โดนแบน)
+                window.windyRainLayer = L.tileLayer('https://tiles.windy.com/tiles/v9/gfs/rain/{z}/{x}/{y}.png', {
+                    opacity: 0.5, zIndex: 450
+                }).addTo(map);
                 btn.classList.add('active');
             } else {
-                windyStore.set('overlay', 'none');
+                if (window.windyRainLayer) map.removeLayer(window.windyRainLayer);
                 btn.classList.remove('active');
             }
         }
 
         function changeBaseMap(type) {
-            if (activeBaseLayer) {
-                map.removeLayer(activeBaseLayer);
-                activeBaseLayer = null;
-            }
+            if (activeBaseLayer) map.removeLayer(activeBaseLayer);
+            if (window.windyRainLayer) map.removeLayer(window.windyRainLayer); // ลบเลเยอร์ฝนถ้ามี
 
             document.getElementById('btn-osm').classList.remove('active');
             document.getElementById('btn-sat').classList.remove('active');
             document.getElementById('tog-windy').classList.remove('active');
-
-            windyStore.set('overlay', 'none');
 
             if (type === 'osm') {
                 activeBaseLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
