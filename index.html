@@ -19,8 +19,7 @@
             font-family: 'Kanit', sans-serif;
             color: #bef0f5;
             background: linear-gradient(180deg, #a6e3f5 0%,#74b0b2 50% , #137584 75%,#26444e 100%);
-            overflow: hidden;
-            height: 100vh;
+            min-height: 100vh;
             position: relative;
             display: flex;
             flex-direction: column;
@@ -204,18 +203,18 @@
 
         /* Info Panel */
         #info-panel {
-    flex: 1 1 0;
-    min-height: 0;
-    background: rgba(255, 255, 255, .85);
-    color: #0f172a;
-    backdrop-filter: blur(12px);
-    box-shadow: 0 0 30px rgba(0, 0, 0, .25);
-    border-radius: 18px;
-    padding: 20px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-}
+            flex: 1 1 0;
+            min-height: 0;
+            background: rgba(255, 255, 255, .85);
+            color: #0f172a;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 0 30px rgba(0, 0, 0, .25);
+            border-radius: 18px;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
 
 
 
@@ -332,28 +331,48 @@
         }
 
         @media (max-width: 1024px) {
+
         body {
-            overflow-y: auto; /* มือถือต้องยอมให้เลื่อนทั้งหน้าได้ */
+            overflow-y: auto;
             height: auto;
-        }   
+        }
+
         #container {
             flex-direction: column;
-            height: auto;      /* ยกเลิกการล็อคความสูงในมือถือ */
-        }
-        #left-side, #info-panel {
-            flex: none;
-            width: 100%;
-            min-width: 0;
             height: auto;
         }
-        #windy {
-            height: 400px;     /* ล็อคแผนที่ในมือถือให้สูง 400px */
-            flex: none;
+
+        #left-side {
+            width: 100%;
+            min-width: 0;
         }
+
+        #windy {
+            width: 100%;
+            height: 300px;
+        }
+
+        #info-panel {
+            width: 100%;
+            height: auto;
+            max-height: none;
+        }
+
         #top-row {
             flex-direction: column;
             height: auto;
         }
+        @media (max-width: 768px) {
+        #chart-content {
+            width: 95%;
+            height: 90vh;
+            padding: 15px;
+        }
+
+        #chart-content canvas {
+            height: 60vh !important;
+        }
+
     }
 
     </style>
@@ -775,6 +794,13 @@ floodWMTS = L.tileLayer(
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+
+                    interaction: {
+                        mode: 'nearest',
+                        axis: 'x',
+                        intersect: false
+                    },
+
                     onClick: (evt, elements) => {
                         if (!elements.length) return;
                         const idx = elements[0].index;
