@@ -330,50 +330,51 @@
             background: none;
         }
 
-        @media (max-width: 1024px) {
+        /* ================= MOBILE FIX ================= */
+    @media (max-width: 1024px) {
 
-        body {
-            overflow-y: auto;
+        html, body {
             height: auto;
+            overflow-y: auto;
         }
 
         #container {
-            flex-direction: column;
             height: auto;
+            display: block;   /* ❗ ไม่ใช้ flex ในมือถือ */
         }
 
-        /* 👇 สำคัญมาก */
         #left-side {
-            height: auto;
-        }
-
-        #top-row {
-            flex-direction: column;
-            height: auto;
-        }
-
-        #windy {
-            height: 350px;   
+            min-width: unset;   /* ❗ เอา 350px ออก */
             width: 100%;
         }
 
+        #top-row {
+            height: auto;
+            display: block;
+        }
+
+        .box-legend-new,
+        .box-layers-new {
+            width: 100%;
+            margin-bottom: 12px;
+        }
+
+        #windy {
+            width: 100%;
+            height: 55vh;   /* แผนที่ใหญ่พอ */
+            min-height: 320px;
+            margin-bottom: 15px;
+        }
+
         #info-panel {
+            width: 100%;
             height: auto;
             max-height: none;
-        }
-
-        @media (max-width: 768px) {
-        #chart-content {
-            width: 95%;
-            height: 90vh;
-            padding: 15px;
-        }
-
-        #chart-content canvas {
-            height: 60vh !important;
+            margin-bottom: 30px;
         }
 
     }
+
 
     </style>
 </head>
