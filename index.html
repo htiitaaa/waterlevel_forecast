@@ -394,18 +394,18 @@
         }
 
         /* Modal กราฟ */
-        #chart-content {
-            width: 92%;
-            height: 85vh;
-            padding: 18px;
-            margin: auto;
-            border-radius: 18px;
+            #chart-content {
+            width: 94%;
+            height: auto;       /* เอาความสูง fix ออก */
+            padding: 16px;
         }
 
         #chart-content canvas {
             width: 100% !important;
-            height: 65vh !important;
+            height: auto !important;
+            aspect-ratio: 16 / 9;   /* บังคับให้เป็นแนวนอน */
         }
+
 
     }
 
@@ -829,7 +829,7 @@ floodWMTS = L.tileLayer(
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: false,
+                    maintainAspectRatio: true,
 
                     interaction: {
                         mode: 'nearest',
