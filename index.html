@@ -342,15 +342,11 @@
 @media (max-width: 768px) {
 
     /* ===== RESET & SAFETY ===== */
-    html, body {
+    body {
         margin: 0;
         padding: 0;
-        max-width: 100%;
+        max-width: 90%;
         overflow-x: hidden;   /* ❗ ห้ามเลื่อนซ้าย–ขวา */
-    }
-
-    body {
-        background: #f5f7fb;
     }
 
     /* ===== HEADER ===== */
@@ -375,7 +371,7 @@
         display: flex;
         flex-direction: column;
         gap: 10px;
-        height: 100vh;
+        height: 60vh;
         padding: 0;
     }
 
@@ -429,7 +425,7 @@
     /* ===== MAP ===== */
     #windy {
         height: 32vh;          /* 🔥 สั้นลง ไม่ทับกล่อง */
-        min-height: 200px;
+        min-height: 100px;
         overflow: hidden;
     }
 
@@ -439,7 +435,7 @@
         left: 0;
         bottom: -42vh;
         width: 100%;
-        height: 42vh;          /* 🔥 ไม่ใหญ่เกิน */
+        height: 32vh;          /* 🔥 ไม่ใหญ่เกิน */
         padding: 12px;
 
         background: rgba(255, 255, 255, 0.96);
@@ -460,20 +456,20 @@
         display: none;
         position: fixed;
         inset: 0;
-        background: rgba(15, 23, 42, 0.9);
-        z-index: 9999;
+        background: white;     /* ⬅️ เต็มจอจริง */
+        z-index: 10000;
 
-        align-items: center;
-        justify-content: center;
+        align-items: stretch;
+        justify-content: stretch;
+        padding: 0;
     }
 
     #chart-content {
         width: 100%;
-        height: 100vh;        /* 🔥 เต็มจอจริง */
+        height: 100%;
+        border-radius: 0;
         padding: 16px;
         box-sizing: border-box;
-        border-radius: 0;
-        background: #ffffff;
     }
 
     #chart {
