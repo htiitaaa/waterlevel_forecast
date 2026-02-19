@@ -381,35 +381,27 @@
         gap: 10px;
     }
 
-    /* ===== TOP ROW → STACKED ===== */
+    /* ===== Top row → vertical ===== */
     #top-row {
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 8px;
         padding: 0;
+        width: 100%;
+        align-items: center;
     }
 
-    /* ===== UNIVERSAL BOX WIDTH (หัวใจของ layout) ===== */
     .box-legend-new,
-    .box-layers-new,
-    #windy {
-        width: 92%;
-        max-width: 92%;
-        margin-left: auto;
-        margin-right: auto;
+    .box-layers-new {
+        width: calc(100% - 16px);   /* ⬅️ กว้างเท่ากัน */
+        margin: 0 auto;
+        flex: none;
+        padding: 10px;
         border-radius: 14px;
     }
 
-    /* ===== LEGEND / LAYERS BOX ===== */
-    .box-legend-new,
-    .box-layers-new {
-        padding: 12px;
-        background: #ffffff;
-    }
-
     .legend-bar {
-        height: 22px;
-        border-radius: 10px;
+        height: 24px;
     }
 
     .legend-item {
@@ -418,8 +410,7 @@
 
     .btn-toggle {
         font-size: 12px;
-        padding: 8px 10px;
-        border-radius: 10px;
+        padding: 8px;
     }
 
     /* ===== MAP ===== */
