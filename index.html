@@ -358,7 +358,7 @@
     /* ===== Main layout ===== */
     #container {
         flex-direction: column;
-        height: calc(100vh - 90px); /* หัก header */
+        height: calc(55vh - 50px); 
         padding: 0;
     }
 
@@ -373,20 +373,17 @@
 
     /* ===== Map ===== */
     #windy {
-        height: 100%;
-        width: 100%;
-        border-radius: 0;
+        height: 55vh;   
+        min-height: 320px;
     }
 
     /* ===== Info panel → bottom sheet ===== */
     #info-panel {
         position: fixed;
         left: 0;
-        bottom: -70vh;
-        width: 100%;
-        max-width: 100%;
-        height: 70vh;
-        padding: 16px;
+        height: 52vh;        /* ⬅️ เล็กลง */
+        bottom: -52vh;
+        padding: 14px;
         box-sizing: border-box;
 
         background: rgba(255,255,255,0.95);
@@ -408,15 +405,12 @@
     }
 
     #chart-content {
-        width: 100%;
-        height: 100vh;
-        border-radius: 0;
+        height: 60vh;      /* ⬅️ ไม่เต็มจอ */
         padding: 12px;
     }
 
     #chart {
-        width: 100% !important;
-        height: calc(100% - 40px) !important;
+        height: 65vh !important;  /* ⬅️ กราฟไม่เบียด */
     }
 
 }
