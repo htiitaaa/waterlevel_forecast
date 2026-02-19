@@ -4,9 +4,11 @@
 <head>
     <meta charset="utf-8" />
     <title>Water Level Forecast - Samut Prakan Deep Learning</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"></script>
+    <script src="https://api.windy.com/assets/map-forecast/libBoot.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1"></script>
@@ -19,13 +21,11 @@
             font-family: 'Kanit', sans-serif;
             color: #bef0f5;
             background: linear-gradient(180deg, #a6e3f5 0%,#74b0b2 50% , #137584 75%,#26444e 100%);
-            min-height: 100vh;
+            overflow: hidden;
+            height: 100vh;
             position: relative;
-            display: flex;
-            flex-direction: column;
         }
 
-        
         /* Background Effects */
         .bubbles {
             position: fixed;
@@ -53,7 +53,6 @@
 
         /* Header */
         header {
-            flex: 0 0 auto;
             padding: 15px;
             text-align: center;
             position: relative;
@@ -117,20 +116,15 @@
             gap: 16px;
             padding: 0 16px 16px 16px;
             height: calc(100vh - 170px);
-            flex-shrink: 0;    
-            box-sizing: border-box;
             position: relative;
             z-index: 5;
         }
-
-
 
         #left-side {
             flex: 3;
             display: flex;
             flex-direction: column;
             gap: 12px;
-            min-width: 350px;
         }
 
         #top-row {
@@ -203,8 +197,7 @@
 
         /* Info Panel */
         #info-panel {
-            flex: 1 1 0;
-            min-height: 0;
+            flex: 1;
             background: rgba(255, 255, 255, .85);
             color: #0f172a;
             backdrop-filter: blur(12px);
@@ -212,11 +205,7 @@
             border-radius: 18px;
             padding: 20px;
             overflow-y: auto;
-            display: flex;
-            flex-direction: column;
         }
-
-
 
         /* Components */
         .legend-bar {
@@ -329,97 +318,22 @@
             border: none;
             background: none;
         }
-
-        /* ================= MOBILE FIX ================= */
-
-    @media (max-width: 1024px) {
-
-        html, body {
-            height: auto;
-            overflow-x: hidden;
+        /* บังคับให้หน้าต่างทับอยู่ด้านบนเสมอ */
+        #windy-overlay {
+        pointer-events: all !important;
         }
 
-        /* ทำให้ทุกกล่องคำนวณขนาดถูกต้อง */
-        * {
-            box-sizing: border-box;
+        /* ทำให้หมุดปกติเรืองแสงอ่อนๆ */
+        .station-marker {
+            filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.8));
         }
 
-        #container {
-            display: block;
-            height: auto;
-            padding: 0 12px 20px 12px;   /* ลด padding ให้พอดีจอ */
+        /* เมื่อคลิกเลือก ให้เรืองแสงสีทองสว่างๆ */
+        .station-marker.selected .marker-pin {
+            filter: drop-shadow(0 0 15px #fff700) drop-shadow(0 0 20px #ffaa00);
+            transform: scale(1.2);
+            transition: all 0.3s ease;
         }
-
-        #left-side {
-            width: 100%;
-            min-width: unset;
-            gap: 10px;
-        }
-
-        #top-row {
-            display: block;
-            height: auto;
-        }
-
-        /* ทุกกล่องกว้างเท่ากัน */
-        .box-legend-new,
-        .box-layers-new,
-        #windy,
-        #info-panel {
-            width: 100%;
-            max-width: 100%;
-            margin-bottom: 14px;
-        }
-
-        /* แผนที่ */
-        #windy {
-            height: 55vh;
-            min-height: 320px;
-        }
-
-        /* กล่องรายละเอียดสถานี */
-        #info-panel {
-            padding: 16px;
-            overflow: visible;
-        }
-
-        /* legend bar ไม่ให้ล้น */
-        .legend-bar {
-            width: 100%;
-        }
-
-        /* ปุ่ม */
-        .btn {
-            width: 100%;
-        }
-
-        /* Modal กราฟ */
-            #chart-content {
-            width: 94%;
-            height: auto;       /* เอาความสูง fix ออก */
-            padding: 16px;
-        }
-
-        #chart-content {
-            width: 94%;
-            max-width: 1000px;
-            height: 85vh;   /* กำหนดความสูงจริง */
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-        }
-        .chart-wrapper {
-            flex: 1;
-            position: relative;
-        }
-
-        .chart-wrapper canvas {
-            width: 100% !important;
-            height: 100% !important;
-        }
-
-    }
-
 
     </style>
 </head>
@@ -460,15 +374,6 @@
             </div>
         </div>
 
-        <div id="chart-content">
-            <button id="close-chart">×</button>
-            <h3 id="modal-st-name"></h3>
-
-            <div class="chart-wrapper">
-            <canvas id="chart"></canvas>
-            </div>
-        </div>
-
         <div id="info-panel">
             <div style="margin-bottom: 15px;">
                 <input type="text" id="st-search" placeholder="🔍 ค้นหาชื่อสถานี..." style="width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #cbd5e1; font-family: 'Kanit'; box-sizing: border-box;">
@@ -493,10 +398,12 @@
                 <div class="level small">โมเดลที่ใช้: <b id="st-model" style="color:#0ea5e9;"></b></div>
 
                 <button class="btn" onclick="openChartModal()" style="font-size: 16px; height: 55px; box-shadow: 0 4px 15px rgba(2, 132, 199, 0.3);">
-                    📊 ดูผลพยากรณ์ล่วงหน้า
+                    📊 ดูพยากรณ์ล่วงหน้า
                 </button>
 
-                <button class="btn" style="background:#6a8395; margin-top:20px; box-shadow: 0 4px 15px rgba(90, 99, 104, 0.3);" onclick="openWindy()"> Windy.com 🌧 </button>
+                <button class="btn" style=" background:#6a8395; margin-top:20px;box-shadow: 0 4px 15px rgba(90, 99, 104, 0.3);"
+                        onclick="openWindy()">Windy.com 🌧
+                </button>
 
                 <div style="margin-top:20px;">
                     <label class="small">ความโปร่งแผนที่น้ำท่วมซ้ำซาก</label>
@@ -505,54 +412,107 @@
             </div>
         </div>
     </div>
+        <div
+        id="windy-overlay"
+        style="
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 9999;
+        "
+    >
+        <div
+            style="
+                position: relative;
+                width: 90%;
+                height: 90%;
+                margin: 2% auto;
+                background: #fff;
+                border-radius: 15px;
+                overflow: hidden;
+                box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            "
+        >
+            <button
+                onclick="closeWindy()"
+                style="
+                    position: absolute;
+                    top: 12px;
+                    left: 12px;
+                    z-index: 10001;
+                    padding: 9px 19px;
+                    background: #ef4444;
+                    color: white;
+                    border: none;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    font-family: 'Kanit';
+                    font-weight: bold;
+                "
+            >
+                ปิด X
+            </button>
 
-    <div id="windy-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999;">
-        <div style="position: relative; width: 90%; height: 90%; margin: 2% auto; background: #fff; border-radius: 15px; overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.5);">
-            <button onclick="closeWindy()" style="position: absolute; top: 12px; left: 12px; z-index: 10001; padding: 9px 19px; background: 
-            #ef4444; color: white; border: none; border-radius: 8px; cursor: pointer; font-family: 'Kanit'; font-weight: bold;">ปิด X</button>
-            
-            <iframe id="windy-frame" width="100%" height="100%" frameborder="0"></iframe>
+            <iframe
+                id="windy-frame"
+                width="100%"
+                height="100%"
+                frameborder="0"
+            ></iframe>
         </div>
     </div>
 
-    <p style="font-size: 12.5px; color: #d6e3f5; margin-top: 10px; text-align: left; padding-left: 20px; opacity: 0.9; font-weight: 300; letter-spacing: 0.5px;">
-        <i class="fas fa-info-circle"></i> <b>หมายเหตุ :</b> ข้อมูลนี้เป็นผลจากการประมวลผลแบบจำลองพยากรณ์ มิใช่ข้อมูลตรวจวัดสถานะปัจจุบันแบบเรียลไทม์
+    <p
+        style="
+            font-size: 12.5px;
+            color: #d6e3f5;
+            margin-top: 10px;
+            text-align: left;
+            padding-left: 20px;
+            opacity: 0.9;
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        "
+    >
+        <i class="fas fa-info-circle"></i>
+        <b>หมายเหตุ :</b>
+        ข้อมูลนี้เป็นผลจากการประมวลผลแบบจำลองพยากรณ์
+        มิใช่ข้อมูลตรวจวัดสถานะปัจจุบันแบบเรียลไทม์
     </p>
 
-    <div id="chart-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; justify-content: center; align-items: center;">
-        <div id="chart-content" style="position: relative; background: white; width: 85%; height: 80%; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
-            <button id="close-chart" onclick="closeChartModal()" style="position: absolute; top: 15px; right: 15px; font-size: 24px; border: none; background: none; cursor: pointer;">&times;</button>
-            
-            <h3 id="modal-st-name" style="margin: 0 0 15px 0; color: #0369a1; font-family: 'Kanit';"></h3>
-            
-            <div style="height: 75%; position: relative;">
+    <div id="chart-modal">
+        <div id="chart-content">
+            <button id="close-chart" onclick="closeChartModal()">&times;</button>
+            <h3 id="modal-st-name" style="margin: 0 0 10px 0; color: #0369a1;"></h3>
+            <div style="height: 85%;">
                 <canvas id="chart"></canvas>
             </div>
+            <div class="small" style="text-align:center; margin-top:15px; color:#64748b; font-family: 'Kanit', sans-serif;">
+                🖱️ คลิกที่จุดบนกราฟเพื่อดูรายละเอียดของวันนั้นๆ | ลากเพื่อเลื่อนซ้าย-ขวา
 
-            <div style="text-align: center; margin-top: 15px;">
-                <p class="small" style="color:#64748b; font-family: 'Kanit'; margin-bottom: 10px;">
-                    🖱️ คลิกที่จุดบนกราฟเพื่อดูรายละเอียด | ลากเพื่อเลื่อนซ้าย-ขวา
-                </p>
-                <button class="btn" onclick="exportChart()" 
+            <button class="btn" onclick="exportChart()" 
                 style="
-                width: 200px; 
-                height: 35px; 
-                background: #0284c7; 
-                color: white; 
-                border: none; 
-                border-radius: 6px; 
-                cursor: pointer; 
-                font-family: 'Kanit';
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                gap: 8px; /* ระยะห่างระหว่างไอคอนกับข้อความ */
-                box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);">
-                💾 Export เป็นรูปภาพ
-                </button>
+                    display: block; 
+                    width: 100%; 
+                    height: 25px; 
+                    line-height: 25px; 
+                    padding: 0; 
+                    font-size: 12px; 
+                    text-align: center; 
+                    border-radius: 4px;
+                    box-shadow: 0 1px 5px rgba(2, 132, 199, 0.3);
+                ">
+                💾 Export เป็นรูป
+            </button>
+
             </div>
         </div>
     </div>
+</body>
 
     <script>
         // Global Variables
@@ -565,17 +525,16 @@
         let allStations = [];
         let osmLayer = null;
         let satLayer = null;
-        let isWindyActive = false;
+        let isWindyActive = true;
         let activeOverlay = null;
   
         const options = {
-            key: 'myPD7Kp6ct2f3k0X6jxKDPYmQy1f5rs6',
+            key: 'myPD7Kp6ct2f3k0X6jxKDPYmQy1f5rs6', // replace with your Windy API key           
+            verbose: false,
             lat: 13.62,
             lon: 100.70,
-            zoom: 10,
-            verbose: false
+            zoom: 11,
         };
-
 
 // ===== สร้าง Leaflet Map ปกติ =====
 map = L.map('windy').setView([13.62, 100.70], 10);
@@ -849,13 +808,6 @@ floodWMTS = L.tileLayer(
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-
-                    interaction: {
-                        mode: 'nearest',
-                        axis: 'x',
-                        intersect: false
-                    },
-
                     onClick: (evt, elements) => {
                         if (!elements.length) return;
                         const idx = elements[0].index;
@@ -1002,7 +954,8 @@ floodWMTS = L.tileLayer(
             bc.appendChild(b);
         }
     </script>
-    
 </body>
 
 </html>
+
+
