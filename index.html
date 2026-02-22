@@ -346,12 +346,14 @@
             margin: 0;
             padding: 0;
             width: 100%;
-            overflow : hidden;
+            height: 100%;
+            overflow: hidden; 
+            position: fixed;
         }
 
         /* ===== HEADER ===== */
         header {
-            padding: 12px;
+            padding: 10px;
             text-align: center;
         }
 
@@ -364,27 +366,13 @@
             font-size: 14px;
         }
 
-        /* ===== MAIN STACK LAYOUT ===== */
-        #container {
-            display: flex;
-            flex-direction: column;
-            height: 60vh;
-            padding: 0;
-            gap: 10px;
-        }
-
-        #left-side {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
 
         /* ===== TOP CONTROLS (STACKED) ===== */
         #top-row {
             display: flex;
             flex-direction: column;
             gap: 10px;
-            padding: 0;
+            padding: 2;
             width: 100%;
         }
 
@@ -407,6 +395,22 @@
         .btn-toggle {
             font-size: 12px;
             padding: 8px;
+        }
+
+        /* ===== MAIN STACK LAYOUT ===== */
+        #container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            gap: 10px;      
+            padding: 0;
+            margin: 0;
+        }
+
+        #left-side {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
         }
 
         /* ===== MAP (พอดีจอ ไม่ต้องเลื่อน) ===== */
