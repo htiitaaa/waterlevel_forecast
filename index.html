@@ -947,18 +947,18 @@ floodWMTS = L.tileLayer(
             currentChartData = sortedData;
 
             // 2. จัดการข้อมูลเส้น (หัวใจสำคัญคือจุดเชื่อมวันที่ 2025-10-31)
+            const lastActualDate = "2025-11-29"; 
+
             const actual = sortedData.map(d => {
-                // เส้นจริงแสดงจนถึงวันที่ 31
-                if (d.date <= "2025-10-31") {
+                if (d.date <= lastActualDate) {
                     return (d.Actual !== undefined && d.Actual !== null) ? d.Actual : d.Predicted;
                 }
                 return null;
             });
 
             const forecast = sortedData.map(d => {
-                // เส้นพยากรณ์เริ่มตั้งแต่คืนวันที่ 31 เพื่อให้เชื่อมกับจุดสุดท้ายของเส้นจริง
-                if (d.date >= "2025-10-31") {
-                    return d.Predicted;
+                if (d.date >= lastActualDate) {
+                    return (d.Forecast !== undefined) ? d.Forecast : d.Predicted;
                 }
                 return null;
             });
